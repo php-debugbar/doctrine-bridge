@@ -1,5 +1,14 @@
 # Doctrine Bridge for PHP Debug Bar
 
+## Install
+
+This requires https://github.com/php-debugbar/php-debugbar/ to be installed first.
+
+
+```
+composer require php-debugbar/doctrine-bridge:"^1@dev"
+```
+
 ## Demo
 
 To run the demo, clone this repository and build the demo database.
