@@ -32,8 +32,8 @@ use Doctrine\ORM\EntityManager;
  */
 class DoctrineCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $debugStack;		
-    
+    protected $debugStack;
+
     protected $durationBackground = false;
 
     /**

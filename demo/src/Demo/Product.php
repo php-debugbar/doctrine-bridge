@@ -12,10 +12,10 @@ class Product
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue]
     protected $id;
-    
+
     #[ORM\Column(type: "string")]
     protected $name;
-    
+
     #[ORM\Column(type: "datetime", nullable: true)]
     protected $updated;
 

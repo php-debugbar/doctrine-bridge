@@ -34,8 +34,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DebugBar\\Bridge\\Doctrine\\Tests\\": "tests",
-            "Demo\\": "src/Demo/"
+            "DebugBar\\Bridge\\Doctrine\\Tests\\": "tests"
         }
     },
     "scripts": {

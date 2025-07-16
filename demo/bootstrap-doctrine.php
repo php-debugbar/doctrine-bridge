@@ -25,8 +25,10 @@ $conn = array(
 );
 
 // obtaining the entity manager
-if (method_exists(EntityManager::class, 'create')) {
-    $entityManager = EntityManager::create($conn, $config);
-} else {
-    $entityManager = new EntityManager(DriverManager::getConnection($conn, $config), $config);
-}
+$createEntityManager = function () use (&$config, $conn){
+    if (method_exists(EntityManager::class, 'create')) {
+        return EntityManager::create($conn, $config);
+    } else {
+        return new EntityManager(DriverManager::getConnection($conn, $config), $config);
+    }
+};
