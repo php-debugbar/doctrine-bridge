@@ -9,6 +9,7 @@ $debugbarRenderer->setBaseUrl('../vendor/php-debugbar/php-debugbar/src/DebugBar/
 $debugStack = new Doctrine\DBAL\Logging\DebugStack();
 $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
 $debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugStack));
+$debugbar['doctrine']->setDurationBackground(true);
 
 $product = new Demo\Product();
 $product->setName("foobar");

@@ -1,13 +1,22 @@
 <?php
-use Doctrine\ORM\Tools\Setup;
-use Doctrine\ORM\EntityManager;
 
-// Create a simple "default" Doctrine ORM configuration for Annotations
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+
 $isDevMode = true;
-$config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $isDevMode);
+// Create a simple "default" Doctrine ORM configuration for Annotations
+$config = new Configuration();
+$config->setMetadataDriverImpl(new AttributeDriver([__DIR__ . '/src/Demo']));
+$config->setProxyDir(__DIR__ . '/proxies');
+$config->setProxyNamespace('App\Proxies');
+$config->setAutoGenerateProxyClasses($isDevMode); // Dev mode, sin caché
+// or with symfony cache
+//$config = ORMSetup::createAttributeMetadataConfiguration(array(__DIR__."/src/Demo"), $isDevMode);
 // or if you prefer yaml or XML
-//$config = Setup::createXMLMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode);
-//$config = Setup::createYAMLMetadataConfiguration(array(__DIR__."/config/yaml"), $isDevMode);
+//$config = ORMSetup::createXMLMetadataConfiguration(array(__DIR__."/config/xml"), $isDevMode);
+//$config = ORMSetup::createYAMLMetadataConfiguration(array(__DIR__."/config/yaml"), $isDevMode);
 
 // database configuration parameters
 $conn = array(
@@ -16,4 +25,8 @@ $conn = array(
 );
 
 // obtaining the entity manager
-$entityManager = EntityManager::create($conn, $config);
+if (method_exists(EntityManager::class, 'create')) {
+    $entityManager = EntityManager::create($conn, $config);
+} else {
+    $entityManager = new EntityManager(DriverManager::getConnection($conn, $config), $config);
+}

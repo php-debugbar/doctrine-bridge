@@ -32,7 +32,9 @@ use Doctrine\ORM\EntityManager;
  */
 class DoctrineCollector extends DataCollector implements Renderable, AssetProvider
 {
-    protected $debugStack;
+    protected $debugStack;		
+    
+    protected $durationBackground = false;
 
     /**
      * DoctrineCollector constructor.
@@ -51,24 +53,60 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     }
 
     /**
+     * Enable/disable the shaded duration background on queries
+     *
+     * @param  bool $enabled
+     */
+    public function setDurationBackground($enabled)
+    {
+        $this->durationBackground = $enabled;
+    }
+
+    /**
      * @return array
      */
     public function collect()
     {
         $queries = array();
+        $nb_statements = 0;
         $totalExecTime = 0;
+        $transactions = ['START TRANSACTION', 'SAVEPOINT', 'COMMIT', 'RELEASE SAVEPOINT', 'ROLLBACK', 'ROLLBACK TO SAVEPOINT'];
         foreach ($this->debugStack->queries as $q) {
+            if (in_array(trim($q['sql'] , '" '), $transactions)) {
+                $q['type'] =  'transaction';
+            }
+
             $queries[] = array(
                 'sql' => $q['sql'],
                 'params' => (object) $this->getParameters($q['params'] ?? []),
                 'duration' => $q['executionMS'],
-                'duration_str' => $this->formatDuration($q['executionMS'])
+                'duration_str' => $this->formatDuration($q['executionMS']),
+                'type' => $q['type'] ?? null,
             );
             $totalExecTime += $q['executionMS'];
+            if (($q['type'] ?? null) === 'transaction') continue;
+            $nb_statements++;
+        }
+
+        if ($this->durationBackground && $totalExecTime > 0) {
+            // For showing background measure on Queries tab
+            $start_percent = 0;
+            foreach ($queries as $i => $stmt) {
+                if (!isset($stmt['duration'])) {
+                    continue;
+                }
+                $width_percent = $stmt['duration'] / $totalExecTime * 100;
+                $queries[$i] = array_merge($stmt, [
+                    'start_percent' => round($start_percent, 3),
+                    'width_percent' => round($width_percent, 3),
+                ]);
+                $start_percent += $width_percent;
+            }
         }
 
         return array(
-            'nb_statements' => count($queries),
+            'count' => count($queries),
+            'nb_statements' => $nb_statements,
             'accumulated_duration' => $totalExecTime,
             'accumulated_duration_str' => $this->formatDuration($totalExecTime),
             'statements' => $queries
