@@ -7,8 +7,11 @@ require_once __DIR__ . '/src/Demo/Product.php';
 $debugbarRenderer->setBaseUrl('../vendor/php-debugbar/php-debugbar/src/DebugBar/Resources');
 
 $debugStack = new Doctrine\DBAL\Logging\DebugStack();
+$entityManager = $createEntityManager();
 $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
 $debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugStack));
+
+$debugbar['doctrine']->setDurationBackground(true);
 
 $product = new Demo\Product();
 $product->setName("foobar");

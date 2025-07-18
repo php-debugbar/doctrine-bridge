@@ -30,5 +30,4 @@ class DoctrineTest extends AbstractBrowserTest
         $this->assertEquals('INSERT INTO products (name, updated) VALUES (?, ?)', $statements[1]);
         $this->assertCount(5, $statements);
     }
-
 }
