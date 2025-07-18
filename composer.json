@@ -38,7 +38,7 @@
         }
     },
     "scripts": {
-        "install-demo-schema": "@php cli-config.php orm:schema-tool:update --force",
+        "install-demo": "@php cli-config.php orm:schema-tool:update --force",
         "demo": [
             "Composer\\Config::disableProcessTimeout",
             "@php -S localhost:8000"
