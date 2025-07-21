@@ -36,6 +36,8 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
 
     protected $durationBackground = false;
 
+    protected $slowThreshold;
+
     /**
      * DoctrineCollector constructor.
      * @param $debugStackOrEntityManager
@@ -63,6 +65,16 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     }
 
     /**
+     * Highlights queries that exceed the threshold
+     *
+     * @param  int|float $threshold miliseconds value
+     */
+    public function setSlowThreshold($threshold)
+    {
+        $this->slowThreshold = $threshold / 1000;
+    }
+
+    /**
      * @return array
      */
     public function collect()
@@ -82,6 +94,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
                 'duration' => $q['executionMS'],
                 'duration_str' => $this->formatDuration($q['executionMS']),
                 'type' => $q['type'] ?? null,
+                'slow' => $this->slowThreshold && $this->slowThreshold <= $q['executionMS'],
             );
             $totalExecTime += $q['executionMS'];
             if (($q['type'] ?? null) === 'transaction') continue;
