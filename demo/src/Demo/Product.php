@@ -2,16 +2,21 @@
 
 namespace Demo;
 
-/**
- * @Entity @Table(name="products")
- **/
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: "products")]
 class Product
 {
-    /** @Id @Column(type="integer") @GeneratedValue **/
+    #[ORM\Id]
+    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue]
     protected $id;
-    /** @Column(type="string") **/
+
+    #[ORM\Column(type: "string")]
     protected $name;
-    /** @Column(type="datetime", nullable=true) **/
+
+    #[ORM\Column(type: "datetime", nullable: true)]
     protected $updated;
 
     public function getId()
