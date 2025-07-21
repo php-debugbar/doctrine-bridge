@@ -14,20 +14,19 @@ use DebugBar\DataCollector\AssetProvider;
 use DebugBar\DataCollector\DataCollector;
 use DebugBar\DataCollector\Renderable;
 use DebugBar\DebugBarException;
-use Doctrine\DBAL\Logging\DebugStack;
-use Doctrine\ORM\EntityManager;
 
 /**
  * Collects Doctrine queries
  *
  * http://doctrine-project.org
  *
- * Uses the DebugStack logger to collects data about queries
+ * Uses a middleware to collects data about queries
  *
  * <code>
- * $debugStack = new Doctrine\DBAL\Logging\DebugStack();
- * $entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
- * $debugbar->addCollector(new DoctrineCollector($debugStack));
+ * $debugbar->addCollector(new DoctrineCollector($debugBarSQLMiddleware));
+ * $config->setMiddlewares([$debugBarSQLMiddleware]);
+ * $conn = Doctrine\DBAL\DriverManager::getConnection($dbParameters, $config);
+ * $entityManager = new Doctrine\ORM\EntityManager($conn, $config);
  * </code>
  */
 class DoctrineCollector extends DataCollector implements Renderable, AssetProvider
@@ -38,18 +37,17 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
 
     /**
      * DoctrineCollector constructor.
-     * @param $debugStackOrEntityManager
+     *
      * @throws DebugBarException
      */
-    public function __construct($debugStackOrEntityManager)
+    public function __construct(?DebugBarSQLMiddleware $debugStack)
     {
-        if ($debugStackOrEntityManager instanceof EntityManager) {
-            $debugStackOrEntityManager = $debugStackOrEntityManager->getConnection()->getConfiguration()->getSQLLogger();
-        }
-        if (!($debugStackOrEntityManager instanceof DebugStack)) {
-            throw new DebugBarException("'DoctrineCollector' requires an 'EntityManager' or 'DebugStack' object");
-        }
-        $this->debugStack = $debugStackOrEntityManager;
+        $this->debugStack = $debugStack;
+    }
+
+    public function setDebugStack(DebugBarSQLMiddleware $debugStack): void
+    {
+        $this->debugStack = $debugStack;
     }
 
     /**
@@ -70,12 +68,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
         $queries = array();
         $nb_statements = 0;
         $totalExecTime = 0;
-        $transactions = ['START TRANSACTION', 'SAVEPOINT', 'COMMIT', 'RELEASE SAVEPOINT', 'ROLLBACK', 'ROLLBACK TO SAVEPOINT'];
-        foreach ($this->debugStack->queries as $q) {
-            if (in_array(trim($q['sql'] , '" '), $transactions)) {
-                $q['type'] =  'transaction';
-            }
-
+        foreach ($this->debugStack?->queries ?? [] as $q) {
             $queries[] = array(
                 'sql' => $q['sql'],
                 'params' => (object) $this->getParameters($q['params'] ?? []),
