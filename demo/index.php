@@ -6,10 +6,10 @@ require_once __DIR__ . '/src/Demo/Product.php';
 
 $debugbarRenderer->setBaseUrl('../vendor/php-debugbar/php-debugbar/src/DebugBar/Resources');
 
-$debugStack = new Doctrine\DBAL\Logging\DebugStack();
-$entityManager = $createEntityManager();
-$entityManager->getConnection()->getConfiguration()->setSQLLogger($debugStack);
-$debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugStack));
+$debugBarSQLMiddleware = new DebugBar\Bridge\Doctrine\DebugBarSQLMiddleware();
+$debugbar->addCollector(new DebugBar\Bridge\Doctrine\DoctrineCollector($debugBarSQLMiddleware));
+$config->setMiddlewares([$debugBarSQLMiddleware]);
+$entityManager = $createEntityManager($config);
 
 $debugbar['doctrine']->setDurationBackground(true);
 
