@@ -6,7 +6,7 @@ This requires https://github.com/php-debugbar/php-debugbar/ to be installed firs
 
 
 ```
-composer require php-debugbar/doctrine-bridge:"^1@dev"
+composer require php-debugbar/doctrine-bridge:"^2@beta"
 ```
 
 ## Demo
