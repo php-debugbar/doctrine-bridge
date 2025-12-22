@@ -1,10 +1,8 @@
 <?php
 
-namespace Debugbar\Bridge\Doctrine\Tests\Browser;
+namespace DebugBar\Bridge\Doctrine\Tests\Browser;
 
-use DebugBar\Browser\Bridge\WebDriverElement;
-
-class DoctrineTest extends AbstractBrowserTest
+class DoctrineTest extends AbstractBrowserTestcase
 {
     public function testMonologCollector(): void
     {
