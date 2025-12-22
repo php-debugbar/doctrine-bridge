@@ -1,12 +1,12 @@
 <?php
 
-namespace Debugbar\Bridge\Doctrine\Tests\Browser;
+namespace DebugBar\Bridge\Doctrine\Tests\Browser;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Panther\DomCrawler\Link;
 use Symfony\Component\Panther\PantherTestCase;
 
-abstract class AbstractBrowserTest extends PantherTestCase
+abstract class AbstractBrowserTestcase extends PantherTestCase
 {
     public function isTabActive(Crawler $crawler, $tab)
     {

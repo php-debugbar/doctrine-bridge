@@ -3,3 +3,4 @@
 /demo/db.sqlite
 /.phpunit.result.cache
 /drivers/
+.phpunit.cache/
