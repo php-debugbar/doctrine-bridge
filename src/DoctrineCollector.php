@@ -57,7 +57,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
      *
      * @param  bool $enabled
      */
-    public function setDurationBackground($enabled)
+    public function setDurationBackground(bool $enabled): void
     {
         $this->durationBackground = $enabled;
     }
@@ -67,7 +67,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
      *
      * @param  int|float $threshold miliseconds value
      */
-    public function setSlowThreshold($threshold)
+    public function setSlowThreshold(int|float $threshold): void
     {
         $this->slowThreshold = $threshold / 1000;
     }
@@ -75,7 +75,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     /**
      * @return array
      */
-    public function collect()
+    public function collect(): array
     {
         $queries = array();
         $nb_statements = 0;
@@ -85,7 +85,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
                 'sql' => $q['sql'],
                 'params' => (object) $this->getParameters($q['params'] ?? []),
                 'duration' => $q['executionMS'],
-                'duration_str' => $this->formatDuration($q['executionMS']),
+                'duration_str' => $this->getDataFormatter()->formatDuration($q['executionMS']),
                 'type' => $q['type'] ?? null,
                 'slow' => $this->slowThreshold && $this->slowThreshold <= $q['executionMS'],
             );
@@ -114,7 +114,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
             'count' => count($queries),
             'nb_statements' => $nb_statements,
             'accumulated_duration' => $totalExecTime,
-            'accumulated_duration_str' => $this->formatDuration($totalExecTime),
+            'accumulated_duration_str' => $this->getDataFormatter()->formatDuration($totalExecTime),
             'statements' => $queries
         );
     }
@@ -145,7 +145,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'doctrine';
     }
@@ -153,7 +153,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     /**
      * @return array
      */
-    public function getWidgets()
+    public function getWidgets(): array
     {
         return array(
             "database" => array(
@@ -172,7 +172,7 @@ class DoctrineCollector extends DataCollector implements Renderable, AssetProvid
     /**
      * @return array
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return array(
             'css' => 'widgets/sqlqueries/widget.css',
