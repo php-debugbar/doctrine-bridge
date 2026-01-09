@@ -7,8 +7,6 @@ on:
   pull_request:
     branches:
       - "*"
-  schedule:
-  - cron: '0 0 * * *'
 
 jobs:
   php-tests:
@@ -19,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.5, 8.4, 8.3, 8.2, 8.1]
+        php: [8.5, 8.4, 8.3, 8.2]
 
     name: PHP${{ matrix.php }}
 
