@@ -28,7 +28,7 @@ class Connection extends AbstractConnectionMiddleware
 
     public function rollBack(): void
     {
-        $this->debugStack->addQuery(fn () => parent::commit(), 'ROLLBACK', null, 'transaction');
+        $this->debugStack->addQuery(fn () => parent::rollBack(), 'ROLLBACK', null, 'transaction');
     }
 
     public function prepare(string $sql): StatementInterface
